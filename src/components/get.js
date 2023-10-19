@@ -60,7 +60,7 @@ navigate("/update/"+JSON.stringify(id),{ relative: "path" })
       <div
         className="d-flex justify-content-center align-items-center "
         style={{ height: "100vh" }}
-      >
+        >
         {  loading? <CircularProgress color="success" />:<table className="table table-primary w-50">
           <thead>
             <tr>
@@ -95,7 +95,9 @@ navigate("/update/"+JSON.stringify(id),{ relative: "path" })
               </tr>
             ))}
           </tbody>
+        <button><Link to={"/"}>Home</Link></button>
         </table>}
+
       </div>
     </div>
   );

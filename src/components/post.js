@@ -18,7 +18,7 @@ export default function Post() {
   useEffect(() => {
 
     const error=Object.values(errors)
-      if(error[0] || error[1] ||error[2] || Name.length<3 ||Email.length<3||Phone.length<9){
+      if(error[0] || error[1] ||error[2] || Name.length<3 ||Email.length<3||Phone.length<10){
         setButton(true)
       }else{
         setButton(false)
@@ -39,6 +39,7 @@ export default function Post() {
           Name:Name,
           Email:Email,
           Phone:Phone
+          ,Disc:Disc
         }
         console.log(data);
         const res = await axios.post("https://encouraging-hare-attire.cyclic.app/receivecontact",data);
@@ -86,7 +87,7 @@ export default function Post() {
   const phone = (e) => {
     const value = e.target.value;
     setPhone(value);
-    if (value.length < 9) {
+    if (value.length < 10) {
       setErrors({ ...errors, Phone: true });
     } else {
       setErrors({ ...errors, Phone: false });
