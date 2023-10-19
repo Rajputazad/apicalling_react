@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-// import { makeStyles } from '@mui/styles'; 
-
+import axios from "axios"
+import { Link } from "react-router-dom";
 export default function Post() {
+
   const [Name, setName] = useState("");
   const [Email, setEmail] = useState("");
   const [Phone, setPhone] = useState("");
@@ -14,56 +14,88 @@ export default function Post() {
     Email: false,
     Phone: false,
   });
-  const send = (e) => {
-    console.log(Name);
-    e.preventDefault();
-    if (!Object.values(errors).some((error) => error)) {
-        // Perform form submission or other action here
-        console.log('Form submitted:');
-      } else {
-        alert('Form has errors. Please fix them.');
+
+  useEffect(() => {
+
+    const error=Object.values(errors)
+      if(error[0] || error[1] ||error[2] || Name.length<3 ||Email.length<3||Phone.length<9){
+        setButton(true)
+      }else{
+        setButton(false)
       }
+
+  // for(const i=0;i<errors.length)
+  //   setButton(!hasErrors);
+  }, [errors]);
+  const [button, setButton] = useState(true);
+  const send = async(e) => {
+    e.preventDefault();
+    if (Name.length<3 ||Email.length<3||Phone.length<3) {
+      // Perform form submission or other action here
+      alert("Form has errors. Please fix them.");
+    } else {
+      try {
+        const data={
+          Name:Name,
+          Email:Email,
+          Phone:Phone
+        }
+        console.log(data);
+        const res = await axios.post("https://encouraging-hare-attire.cyclic.app/receivecontact",data);
+        console.log(res.data.message);
+        if(res.status==200){
+          alert(res.data.message)
+        }
+        console.log("Form submitted:");
+      } catch (error) {
+        console.log(error.response.data.message);
+        if(error.response.data.message.Name){
+          alert(error.response.data.message.Name)
+        }else if(error.response.data.message.Email){
+          alert(error.response.data.message.Email)
+          
+        }else if(error.response.data.message.Phone){
+          alert(error.response.data.message.Phone)
+
+        }else{
+          
+          alert("Somthing went worng")
+        }
+      }
+    }
   };
 
-
-const name=(e)=>{
-    const value =e.target.value
-    setName(value)
-    if(value.length<3){
-        setErrors({...errors,Name:true})
-    }else{
-        setErrors({...errors,Name:false})
-}
-
-}
-const email=(e)=>{
-    const value =e.target.value
-    setEmail(value)
-    if(value.length<3){
-        setErrors({...errors,Name:true})
-    }else{
-        setErrors({...errors,Name:false})
-}
-
-}
-const phone=(e)=>{
-    const value =e.target.value
-    setPhone(value)
-    if(value.length<3){
-        setErrors({...errors,Name:true})
-    }else{
-        setErrors({...errors,Name:false})
-}
-
-}
-const desc=(e)=>{
-    const value =e.target.value
-    setDisc(value)
-   
-}
-
-
-
+  const name = (e) => {
+    const value = e.target.value;
+    setName(value);
+    if (value.length < 3) {
+      setErrors({ ...errors, Name: true });
+    } else {
+      setErrors({ ...errors, Name: false });
+    }
+  };
+  const email = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (value.length < 3) {
+      setErrors({ ...errors, Email: true });
+    } else {
+      setErrors({ ...errors, Email: false });
+    }
+  };
+  const phone = (e) => {
+    const value = e.target.value;
+    setPhone(value);
+    if (value.length < 9) {
+      setErrors({ ...errors, Phone: true });
+    } else {
+      setErrors({ ...errors, Phone: false });
+    }
+  };
+  const desc = (e) => {
+    const value = e.target.value;
+    setDisc(value);
+  };
 
   return (
     <div>
@@ -73,10 +105,11 @@ const desc=(e)=>{
       >
         <form onSubmit={send}>
           <TextField
-onChange={name}
+          type="text"
+            onChange={name}
             error={errors.Name}
             required
-            id="outlined-required"
+            // id="outlined-required"
             label="Name"
             name="Name"
             value={Name}
@@ -85,11 +118,11 @@ onChange={name}
           <br />
           <br />
           <TextField
-          onChange={email}
-          type="email"
-            error
+            onChange={email}
+            type="email"
+            error={errors.Email}
             required
-            id="outlined-required"
+            // id="outlined-required"
             label="Email"
             value={Email}
             // onChange={}
@@ -97,10 +130,11 @@ onChange={name}
           <br />
           <br />
           <TextField
-onChange={phone}
-            error
+          type="number"
+            onChange={phone}
+            error={errors.Phone}
             required
-            id="outlined-required"
+            // id="outlined-required"
             label="Phone"
             value={Phone}
             // onChange={}
@@ -108,30 +142,32 @@ onChange={phone}
           <br />
           <br />
           <TextField
- onChange={desc}
-      multiline
-      rows={4} // You can adjust the number of rows
-      variant="outlined"
-      fullWidth
-      value={Disc}
-      placeholder="Your text goes here"
-    />
+            onChange={desc}
+            multiline
+            rows={4} // You can adjust the number of rows
+            variant="outlined"
+            fullWidth
+            value={Disc}
+            placeholder="Your text goes here"
+          />
           <br />
           <br />
 
           <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        disabled={errors.Name}
-      >
-        Submit
-      </Button>
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={button}
+          >
+            Submit
+          </Button><br/><br/>
+          <Link to="/get"><p>Next page</p></Link>
+          
         </form>
       </div>
     </div>
   );
-  }
+}
 // const useStyles = makeStyles((theme) => ({
 //     customTextarea: {
 //       '& .MuiInputBase-input': {
